@@ -1,0 +1,75 @@
+/* 全域基座：淺灰 SaaS。組件級顏色一律走 theme.ts，這裡只做元素預設與捲軸。 */
+:root {
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", "Noto Sans TC", sans-serif;
+  background: #f3f4f6;
+  color: #111827;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* 鍵盤可見焦點（DESIGN.md §7）：黑 2px 描邊，全站按鈕/輸入/下拉自動生效 */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 2px solid #111827;
+  outline-offset: 2px;
+}
+
+::selection {
+  background: #dbeafe;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  color: #111827;
+}
+
+input[type="range"] {
+  accent-color: #111827;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 8px;
+  border: 2px solid #f3f4f6;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+details > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+details > summary::-webkit-details-marker {
+  display: none;
+}

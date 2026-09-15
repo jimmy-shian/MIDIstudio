@@ -1,0 +1,27 @@
+import { useProjectStore } from "../store/useProjectStore";
+import { importMidi } from "../api/midiClient";
+import { btn } from "../styles/theme";
+import { UploadIcon } from "./icons";
+
+// 模組：MIDI 匯入按鈕。
+export default function MidiImportButton() {
+  const loadProject = useProjectStore((s) => s.loadProject);
+
+  return (
+    <label style={{ ...btn, cursor: "pointer", margin: 0 }}>
+      <UploadIcon size={14} />匯入 MIDI
+      <input type="file" accept=".mid,.midi" hidden
+        onChange={async (e) => {
+          const f = e.target.files?.[0];
+          if (!f) return;
+          try {
+            loadProject(await importMidi(f));
+          } catch (err: any) {
+            alert(`匯入失敗: ${err.message}`);
+          } finally {
+            e.target.value = "";
+          }
+        }} />
+    </label>
+  );
+}
