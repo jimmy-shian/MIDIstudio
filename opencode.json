@@ -1,0 +1,13 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "midistudio": {
+      "type": "local",
+      "command": [
+        "node",
+        "C:/Users/Administrator/Desktop/html_test/MIDIstudio/backend/dist/mcp-bundle/server.js"
+      ],
+      "enabled": true
+    }
+  }
+}

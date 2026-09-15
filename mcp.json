@@ -1,0 +1,15 @@
+{
+  "_comment": "任選一個貼到你的 MCP host（Claude Desktop / VS Code Copilot / Cursor）即可。",
+  "mcpServers": {
+    "midistudio-dev": {
+      "command": "npx",
+      "args": ["tsx", "C:/Users/Administrator/Desktop/html_test/MIDIstudio/backend/src/mcp/server.ts"],
+      "cwd": "C:/Users/Administrator/Desktop/html_test/MIDIstudio/backend"
+    },
+    "midistudio": {
+      "command": "node",
+      "args": ["C:/Users/Administrator/Desktop/html_test/MIDIstudio/backend/dist/mcp-bundle/server.js"],
+      "cwd": "C:/Users/Administrator/Desktop/html_test/MIDIstudio/backend"
+    }
+  }
+}
