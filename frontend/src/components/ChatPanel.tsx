@@ -24,7 +24,8 @@ export default function ChatPanel() {
   const { busy, send, newConversation } = useAgent();
 
   const onSend = async () => {
-    const text = inputText;
+    const text = inputText.trim();
+    if (!text || busy) return;
     try {
       const { reply, reports } = await send(text);
       setLog((l) => appendLog(l, [`你: ${text}`, `AI: ${reply}`, ...reports.map((r) => `✔ ${r}`)]));
@@ -69,8 +70,22 @@ export default function ChatPanel() {
       <div className={styles.log}>
         {log.map(renderLine)}
       </div>
-      <textarea value={inputText} onChange={(e) => setInputText(e.target.value)} rows={3}
-        className={styles.input} />
+      <textarea
+        value={inputText}
+        onChange={(e) => setInputText(e.target.value)}
+        onKeyDown={(e) => {
+          // Enter 送出、Shift+Enter 換行（輸入框 typing 時 undo 快捷鍵已禮讓）
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            void onSend();
+          }
+        }}
+        rows={2}
+        placeholder="描述想要的音樂…（Enter 送出，Shift+Enter 換行）"
+        aria-label="和 AI 的對話輸入框"
+        className={styles.input}
+      />
+      <div className={styles.hint}>Enter 送出 · Shift+Enter 換行</div>
       <button className={styles.send} onClick={onSend} disabled={busy}>
         {busy ? "生成中…" : "送出給 AI"}
       </button>
