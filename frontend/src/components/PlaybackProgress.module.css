@@ -1,0 +1,48 @@
+/* 模組：播放進度條（可點擊跳轉）。動態寬度走原生 <progress> value/max，不用 inline style。 */
+.wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 200px;
+  flex: 1 1 240px;
+  max-width: 420px;
+}
+
+.bar {
+  flex: 1;
+  min-width: 0;
+  height: 8px;
+  appearance: none;
+  border: 1px solid var(--ms-border-strong);
+  border-radius: 999px;
+  background: var(--ms-subtle);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.bar::-webkit-progress-bar {
+  background: var(--ms-subtle);
+  border-radius: 999px;
+}
+
+.bar::-webkit-progress-value {
+  background: var(--ms-fg);
+  border-radius: 999px;
+}
+
+.bar::-moz-progress-bar {
+  background: var(--ms-fg);
+  border-radius: 999px;
+}
+
+.bar[data-active="false"] {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.time {
+  font-size: 12px;
+  color: var(--ms-fg-2);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}

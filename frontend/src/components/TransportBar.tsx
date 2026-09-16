@@ -11,9 +11,10 @@ import styles from "./TransportBar.module.css";
 import { DownloadIcon, PlayIcon, RedoIcon, StopIcon, UndoIcon } from "./icons";
 import MidiImportButton from "./MidiImportButton";
 import ProjectSwitcher from "./ProjectSwitcher";
+import PlaybackProgress from "./PlaybackProgress";
 
 export default function TransportBar() {
-  const { isPlaying, toggle } = usePlayback();
+  const { isPlaying, progress, toggle, seek } = usePlayback();
   const bpm = useProjectStore((s) => s.bpm);
   const keyRoot = useProjectStore((s) => s.keyRoot);
   const scale = useProjectStore((s) => s.scale);
@@ -50,6 +51,7 @@ export default function TransportBar() {
         {isPlaying ? <StopIcon size={14} /> : <PlayIcon size={14} />}
         {isPlaying ? "停止" : "播放"}
       </button>
+      <PlaybackProgress progress={progress} isPlaying={isPlaying} onSeek={(r) => void seek(r)} />
       <button className={controls.btn} disabled={!canUndo} title="Ctrl+Z"
         onClick={() => { stopIfPlaying(); useProjectStore.getState().undo(); }}>
         <UndoIcon size={14} />復原
