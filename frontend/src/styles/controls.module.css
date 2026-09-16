@@ -1,0 +1,76 @@
+/* 模組：共用控制元件樣式（按鈕三層級 / 輸入 / 卡片 / 標題 / 次文字）。
+ * 取代 styles/theme.ts 的 btn/btnPrimary/btnGhost/input/card/sectionTitle/muted
+ * 內聯物件，全站用引用方式共用（import styles from ".../controls.module.css"）。
+ * 色票源自 tokens.css 變數，數值與 DESIGN.md 一致。
+ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  line-height: 20px;
+  border-radius: var(--ms-radius-sm);
+  border: 1px solid var(--ms-border-strong);
+  background: var(--ms-surface);
+  color: var(--ms-fg);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color var(--ms-hover-duration) ease, box-shadow var(--ms-expand-duration) var(--ms-expand-ease);
+}
+
+.btn:hover {
+  background-color: var(--ms-trigger-bg-hover);
+}
+
+.btnPrimary {
+  composes: btn;
+  background: var(--ms-fg);
+  border-color: var(--ms-fg);
+  color: #ffffff;
+}
+
+.btnPrimary:hover {
+  background-color: #1f2937;
+}
+
+.btnGhost {
+  composes: btn;
+  border-color: transparent;
+  background: transparent;
+  color: var(--ms-fg-2);
+  padding: 6px 8px;
+}
+
+.btnGhost:hover {
+  background-color: var(--ms-option-bg-hover);
+}
+
+.input {
+  font-size: 13px;
+  padding: 5px 8px;
+  border-radius: var(--ms-radius-sm);
+  border: 1px solid var(--ms-border-strong);
+  background: var(--ms-surface);
+  color: var(--ms-fg);
+}
+
+.card {
+  background: var(--ms-surface);
+  border: 1px solid var(--ms-border);
+  border-radius: var(--ms-radius-md);
+  box-shadow: var(--ms-shadow);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ms-fg);
+}
+
+.muted {
+  font-size: 12px;
+  color: var(--ms-fg-2);
+}

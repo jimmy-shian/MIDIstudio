@@ -88,10 +88,15 @@ export const ChevronLeftIcon = (p: IconProps) => (
     <path d="m15 6-6 6 6 6" />
   </Base>
 );
-
 export const ChevronRightIcon = (p: IconProps) => (
   <Base {...p}>
     <path d="m9 6 6 6-6 6" />
+  </Base>
+);
+
+export const ChevronUpIcon = (p: IconProps) => (
+  <Base {...p}>
+    <path d="m6 15 6-6 6 6" />
   </Base>
 );
 

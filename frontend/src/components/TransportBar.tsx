@@ -6,7 +6,8 @@ import { stopIfPlaying } from "../hooks/useUndoShortcuts";
 import { PITCH_CLASS_NAMES } from "@midistudio/shared";
 import { exportMidi } from "../api/midiClient";
 import { downloadBlob } from "../utils/download";
-import { btn, btnPrimary, colors, input, muted } from "../styles/theme";
+import controls from "../styles/controls.module.css";
+import styles from "./TransportBar.module.css";
 import { DownloadIcon, PlayIcon, RedoIcon, StopIcon, UndoIcon } from "./icons";
 import MidiImportButton from "./MidiImportButton";
 import ProjectSwitcher from "./ProjectSwitcher";
@@ -43,36 +44,36 @@ export default function TransportBar() {
   };
 
   return (
-    <div style={{ display: "flex", gap: 8, alignItems: "center", padding: "10px 16px", background: colors.surface, borderBottom: `1px solid ${colors.border}`, flexWrap: "wrap" }}>
+    <div className={styles.bar}>
       <ProjectSwitcher />
-      <button style={isPlaying ? btn : btnPrimary} onClick={toggle}>
+      <button className={isPlaying ? controls.btn : controls.btnPrimary} onClick={toggle}>
         {isPlaying ? <StopIcon size={14} /> : <PlayIcon size={14} />}
         {isPlaying ? "停止" : "播放"}
       </button>
-      <button style={btn} disabled={!canUndo} title="Ctrl+Z"
+      <button className={controls.btn} disabled={!canUndo} title="Ctrl+Z"
         onClick={() => { stopIfPlaying(); useProjectStore.getState().undo(); }}>
         <UndoIcon size={14} />復原
       </button>
-      <button style={btn} disabled={!canRedo} title="Ctrl+Shift+Z / Ctrl+Y"
+      <button className={controls.btn} disabled={!canRedo} title="Ctrl+Shift+Z / Ctrl+Y"
         onClick={() => { stopIfPlaying(); useProjectStore.getState().redo(); }}>
         <RedoIcon size={14} />重做
       </button>
-      <label style={muted}>BPM
+      <label className={styles.bpmLabel}>BPM
         <input type="number" value={bpmText} min={40} max={240}
           onChange={(e) => onBpmChange(e.target.value)}
           onBlur={(e) => commitBpm(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter") commitBpm((e.target as HTMLInputElement).value); }}
-          style={{ ...input, width: 64, marginLeft: 6 }} />
+          className={`${controls.input} ${styles.bpmInput}`} />
       </label>
-      <span style={muted}>調 {PITCH_CLASS_NAMES[keyRoot]} {scale}</span>
-      <button style={btn} onClick={async () => {
+      <span className={styles.keyLabel}>調 {PITCH_CLASS_NAMES[keyRoot]} {scale}</span>
+      <button className={controls.btn} onClick={async () => {
         const project = selectProjectSnapshot(useProjectStore.getState());
         downloadBlob(await exportMidi(project), "midistudio.mid");
       }}>
         <DownloadIcon size={14} />匯出 MIDI
       </button>
       <MidiImportButton />
-      <span style={{ ...muted, marginLeft: "auto" }}>
+      <span className={styles.saved}>
         {lastSavedAt ? `已自動儲存 ${new Date(lastSavedAt).toLocaleTimeString()}` : "尚未存檔"}
       </span>
     </div>

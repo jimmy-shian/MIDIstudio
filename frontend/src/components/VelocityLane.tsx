@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, type CSSProperties } from "react";
 import { useProjectStore } from "../store/useProjectStore";
 import { useViewStore } from "../store/viewStore";
 import { useVelocityEdit } from "../hooks/useVelocityEdit";
-import { velocityColor, velocityHeight } from "../utils/velocity";
-import { btn, colors, muted } from "../styles/theme";
+import { velocityHeight } from "../utils/velocity";
+import controls from "../styles/controls.module.css";
+import styles from "./VelocityLane.module.css";
 import { midiToName } from "@midistudio/shared";
 
 // 模組：力度 Lane。只負責顯示+拖曳，狀態走 store，寫入走 useVelocityEdit。
@@ -14,6 +15,14 @@ const LANE_H = 72;
 function yToVelocity(y: number): number {
   const ratio = 1 - y / LANE_H;
   return Math.max(1, Math.min(127, Math.round(ratio * 127)));
+}
+
+// 力度分級（與 velocity.ts 閾值一致）
+function fillClass(v: number): string {
+  if (v >= 100) return styles.fillVel4;
+  if (v >= 85) return styles.fillVel3;
+  if (v >= 65) return styles.fillVel2;
+  return styles.fillVel1;
 }
 
 export default function VelocityLane() {
@@ -65,29 +74,26 @@ export default function VelocityLane() {
   };
 
   return (
-    <div style={{ background: colors.surface, borderTop: `1px solid ${colors.border}`, padding: "8px 12px" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-        <strong style={{ fontSize: 12 }}>力度 {track.name} ({notes.length})</strong>
-        <button style={btn} onClick={() => setAll(track.id, 90)}>全部 90</button>
-        <button style={btn} onClick={() => setAll(track.id, 70)}>全部 70</button>
-        <span style={muted}>上下拖曳色條改力度</span>
+    <div className={styles.wrap}>
+      <div className={styles.head}>
+        <strong className={styles.title}>力度 {track.name} ({notes.length})</strong>
+        <button className={controls.btn} onClick={() => setAll(track.id, 90)}>全部 90</button>
+        <button className={controls.btn} onClick={() => setAll(track.id, 70)}>全部 70</button>
+        <span className={controls.muted}>上下拖曳色條改力度</span>
       </div>
-      <div style={{ display: "flex", gap: 3, overflowX: "auto", alignItems: "flex-end", minHeight: LANE_H }}>
-        {notes.length === 0 && <span style={muted}>尚無音符，先在上方琴格點音</span>}
+      <div className={styles.lane}>
+        {notes.length === 0 && <span className={controls.muted}>尚無音符，先在上方琴格點音</span>}
         {notes.map((n) => (
           <div key={n.id} title={`${midiToName(n.pitch)}@${n.startBeat} v=${n.velocity}`}
             onPointerDown={(e) => { dragId.current = n.id; (e.target as HTMLElement).setPointerCapture?.(e.pointerId); applyAt(e, n.id); }}
             onPointerMove={(e) => { if (dragId.current === n.id && e.buttons > 0) applyAt(e, n.id); }}
             onPointerUp={() => { dragId.current = null; flushPending(); }}
             onPointerCancel={() => { dragId.current = null; flushPending(); }}
-            style={{
-              width: 18, height: LANE_H, background: colors.subtle, cursor: "ns-resize",
-              display: "flex", alignItems: "flex-end", border: `1px solid ${colors.border}`, borderRadius: 3,
-            }}>
-            <div style={{
-              width: "100%", height: velocityHeight(n.velocity, LANE_H),
-              background: velocityColor(n.velocity), borderRadius: "0 0 2px 2px",
-            }} />
+            className={styles.bar}>
+            <div
+              className={fillClass(n.velocity)}
+              style={{ "--h": `${velocityHeight(n.velocity, LANE_H)}px` } as CSSProperties}
+            />
           </div>
         ))}
       </div>

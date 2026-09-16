@@ -1,0 +1,17 @@
+/* 模組：工程切換列（工程選單走 Dropdown，其餘沿用共用控制樣式）。 */
+.wrap {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  min-width: 0;
+}
+
+.menu {
+  min-width: 170px;
+  max-width: 230px;
+  flex: 1 1 auto;
+}
+
+.nameInput {
+  width: 110px;
+}

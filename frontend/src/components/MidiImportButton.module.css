@@ -1,0 +1,6 @@
+/* 模組：MIDI 匯入按鈕（label 偽裝成按鈕）。 */
+.label {
+  composes: btn from "../styles/controls.module.css";
+  cursor: pointer;
+  margin: 0;
+}

@@ -1,0 +1,16 @@
+/* 模組：琴格捲動/縮放/snap 控制列（選單走 Dropdown）。 */
+.bar {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--ms-surface);
+  border-bottom: 1px solid var(--ms-border);
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+
+.menu {
+  min-width: 110px;
+  max-width: 150px;
+}

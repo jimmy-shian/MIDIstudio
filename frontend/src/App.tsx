@@ -7,21 +7,21 @@ import SettingsPanel from "./components/SettingsPanel";
 import ChatPanel from "./components/ChatPanel";
 import { usePersistence } from "./hooks/usePersistence";
 import { useUndoShortcuts } from "./hooks/useUndoShortcuts";
-import { colors } from "./styles/theme";
+import styles from "./App.module.css";
 
 export default function App() {
   usePersistence();
   useUndoShortcuts();
   return (
-    <div style={{ height: "100vh", display: "flex", flexDirection: "column", background: colors.bg }}>
+    <div className={styles.app}>
       <TransportBar />
-      <div style={{ padding: "12px 16px 0", display: "flex", flexDirection: "column", gap: 12 }}>
+      <div className={styles.topStack}>
         <ChordPanel />
         <SettingsPanel />
       </div>
-      <div style={{ flex: 1, display: "flex", gap: 12, padding: 16, minHeight: 0 }}>
+      <div className={styles.workspace}>
         <TrackList />
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, background: colors.surface, border: `1px solid ${colors.border}`, borderRadius: 8, boxShadow: colors.shadow, overflow: "hidden" }}>
+        <div className={styles.pianoCard}>
           <PianoRoll />
           <VelocityLane />
         </div>

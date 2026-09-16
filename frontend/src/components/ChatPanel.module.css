@@ -1,0 +1,86 @@
+/* 模組：AI 作曲助理面板。輸入框預設 3rem、可垂直拉伸；Enter 送出、Shift+Enter 換行。 */
+.panel {
+  composes: card from "../styles/controls.module.css";
+  width: 340px;
+  flex: none;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: calc(100vh - 220px);
+  min-height: 320px;
+  position: sticky;
+  top: 76px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.actions {
+  display: flex;
+  gap: 4px;
+}
+
+.log {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 200px;
+}
+
+.bubbleMine {
+  margin-bottom: 6px;
+  padding: 6px 10px;
+  border-radius: var(--ms-radius-md);
+  font-size: 13px;
+  line-height: 20px;
+  background: var(--ms-subtle);
+  border: 1px solid var(--ms-border);
+  color: var(--ms-fg);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.bubbleAi {
+  margin-bottom: 6px;
+  padding: 6px 10px;
+  border-radius: var(--ms-radius-md);
+  font-size: 13px;
+  line-height: 20px;
+  background: var(--ms-accent-soft);
+  border: 1px solid var(--ms-accent-border);
+  color: var(--ms-fg);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.sysLine {
+  font-size: 12px;
+  color: var(--ms-fg-2);
+  margin-bottom: 4px;
+}
+
+.input {
+  composes: input from "../styles/controls.module.css";
+  margin-top: 8px;
+  height: 3rem;
+  min-height: 3rem;
+  width: 100%;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--ms-meta);
+  margin-top: 4px;
+}
+
+.send {
+  composes: btnPrimary from "../styles/controls.module.css";
+  margin-top: 8px;
+  justify-content: center;
+}

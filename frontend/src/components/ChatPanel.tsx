@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useAgent } from "../hooks/useAgent";
 import { cleanupSessions, listSessions } from "../api/agentClient";
-import { btn, btnGhost, btnPrimary, card, colors, input, muted, sectionTitle } from "../styles/theme";
+import controls from "../styles/controls.module.css";
+import styles from "./ChatPanel.module.css";
 import { PlusIcon, TrashIcon } from "./icons";
 
 // 對話記錄上限：避免長時間會話無限增長吃掉記憶體，保留最近 200 條
@@ -11,25 +12,10 @@ function appendLog(prev: string[], lines: string[]): string[] {
   return next.length > MAX_LOG ? next.slice(next.length - MAX_LOG) : next;
 }
 
-function bubbleStyle(mine: boolean): React.CSSProperties {
-  return {
-    marginBottom: 6,
-    padding: "6px 10px",
-    borderRadius: 8,
-    fontSize: 13,
-    lineHeight: "20px",
-    background: mine ? colors.subtle : "#eff6ff",
-    border: `1px solid ${mine ? colors.border : "#bfdbfe"}`,
-    color: colors.text,
-    whiteSpace: "pre-wrap",
-    wordBreak: "break-word",
-  };
-}
-
 function renderLine(l: string, i: number) {
-  if (l.startsWith("你: ")) return <div key={i} style={bubbleStyle(true)}>{l.slice(3)}</div>;
-  if (l.startsWith("AI: ")) return <div key={i} style={bubbleStyle(false)}>{l.slice(4)}</div>;
-  return <div key={i} style={{ ...muted, marginBottom: 4 }}>{l}</div>;
+  if (l.startsWith("你: ")) return <div key={i} className={styles.bubbleMine}>{l.slice(3)}</div>;
+  if (l.startsWith("AI: ")) return <div key={i} className={styles.bubbleAi}>{l.slice(4)}</div>;
+  return <div key={i} className={styles.sysLine}>{l}</div>;
 }
 
 export default function ChatPanel() {
@@ -68,24 +54,24 @@ export default function ChatPanel() {
   };
 
   return (
-    <div style={{ ...card, width: 340, padding: 12, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-        <h4 style={sectionTitle}>AI 作曲助理</h4>
-        <div style={{ display: "flex", gap: 4 }}>
-          <button style={btnGhost} onClick={() => void onNew()} disabled={busy} title="忘掉上文，重新開始">
+    <div className={styles.panel}>
+      <div className={styles.header}>
+        <h4 className={controls.sectionTitle}>AI 作曲助理</h4>
+        <div className={styles.actions}>
+          <button className={controls.btnGhost} onClick={() => void onNew()} disabled={busy} title="忘掉上文，重新開始">
             <PlusIcon size={14} />新對話
           </button>
-          <button style={btnGhost} onClick={() => void onCleanup()} disabled={busy} title="清掉 30 天沒碰的舊對話">
+          <button className={controls.btnGhost} onClick={() => void onCleanup()} disabled={busy} title="清掉 30 天沒碰的舊對話">
             <TrashIcon size={14} />清舊
           </button>
         </div>
       </div>
-      <div style={{ flex: 1, overflowY: "auto", minHeight: 200 }}>
+      <div className={styles.log}>
         {log.map(renderLine)}
       </div>
       <textarea value={inputText} onChange={(e) => setInputText(e.target.value)} rows={3}
-        style={{ ...input, marginTop: 8, resize: "vertical" }} />
-      <button style={{ ...btnPrimary, marginTop: 8, justifyContent: "center" }} onClick={onSend} disabled={busy}>
+        className={styles.input} />
+      <button className={styles.send} onClick={onSend} disabled={busy}>
         {busy ? "生成中…" : "送出給 AI"}
       </button>
     </div>

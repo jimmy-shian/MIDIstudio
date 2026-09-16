@@ -1,0 +1,73 @@
+/* 模組：琴格（視窗化渲染）。欄數走預設 class（4/8/16/32/64 拍），音塊色走力度分級 class。 */
+.root {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--ms-surface);
+}
+
+.scroll {
+  flex: 1;
+  overflow: auto;
+  padding: 12px;
+  max-height: 60vh;
+}
+
+.grid {
+  display: grid;
+  gap: 2px;
+}
+
+.cols4 { grid-template-columns: 56px repeat(4, 28px); }
+.cols8 { grid-template-columns: 56px repeat(8, 28px); }
+.cols16 { grid-template-columns: 56px repeat(16, 28px); }
+.cols32 { grid-template-columns: 56px repeat(32, 28px); }
+.cols64 { grid-template-columns: 56px repeat(64, 28px); }
+
+.colLabel {
+  text-align: center;
+  font-size: 10px;
+  color: var(--ms-meta);
+}
+
+.rowLabel {
+  font-size: 10px;
+  color: var(--ms-meta);
+}
+
+.rowLabelC {
+  composes: rowLabel;
+  color: var(--ms-fg);
+  font-weight: 600;
+}
+
+.cell {
+  width: 28px;
+  height: 18px;
+  cursor: pointer;
+  border-radius: 3px;
+  background: var(--ms-surface);
+  border: 1px solid var(--ms-border);
+}
+
+.cellPitchC {
+  background: #f3f4f6;
+}
+
+.cellBar {
+  border-color: var(--ms-border-strong);
+}
+
+/* 力度分級色（與 utils/velocity.ts 閾值一致，色盲另有 C 列底色＋label 加粗可辨） */
+.vel1 { background: #868e96; border-color: #868e96; }
+.vel2 { background: #63e6be; border-color: #63e6be; }
+.vel3 { background: #4dabf7; border-color: #4dabf7; }
+.vel4 { background: #ff8787; border-color: #ff8787; }
+
+.empty {
+  text-align: center;
+  font-size: 12px;
+  color: var(--ms-fg-2);
+  padding: 16px;
+}

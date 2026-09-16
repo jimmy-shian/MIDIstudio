@@ -1,0 +1,22 @@
+/* 模組：操作設定面板（外層收合走 Collapsible，內層選單走 Dropdown）。 */
+.row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 12px;
+}
+
+.field {
+  font-size: 12px;
+  color: var(--ms-fg-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.narrow {
+  min-width: 130px;
+  max-width: 170px;
+  flex: 1 1 auto;
+}

@@ -1,0 +1,71 @@
+/* 模組：音軌列表。 */
+.panel {
+  composes: card from "../styles/controls.module.css";
+  width: 220px;
+  flex: none;
+  padding: 12px;
+  overflow-y: auto;
+  max-height: calc(100vh - 220px);
+  position: sticky;
+  top: 76px;
+}
+
+.title {
+  composes: sectionTitle from "../styles/controls.module.css";
+  margin-bottom: 8px;
+}
+
+.item {
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  border-radius: var(--ms-radius-sm);
+  background: var(--ms-subtle);
+  border: 1px solid var(--ms-border);
+  transition: background-color var(--ms-hover-duration) ease;
+}
+
+.item:hover {
+  background-color: var(--ms-trigger-bg-hover);
+}
+
+.item[data-active="true"] {
+  background: var(--ms-accent-soft);
+  border-color: var(--ms-accent);
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  composes: muted from "../styles/controls.module.css";
+  margin-top: 2px;
+}
+
+.delRow {
+  margin-top: 4px;
+}
+
+.delBtn {
+  composes: btnGhost from "../styles/controls.module.css";
+  padding: 2px 4px;
+  font-size: 12px;
+}
+
+.addRow {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}

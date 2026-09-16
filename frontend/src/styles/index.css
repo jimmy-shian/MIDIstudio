@@ -1,4 +1,6 @@
-/* 全域基座：淺灰 SaaS。組件級顏色一律走 theme.ts，這裡只做元素預設與捲軸。 */
+/* 全域基座：淺灰 SaaS。設計變數見 ./tokens.css；組件樣式一律走各自 .module.css＋共用 controls.module.css，禁 inline style。 */
+@import "./tokens.css";
+
 :root {
   color-scheme: light;
 }
@@ -7,13 +9,22 @@
   box-sizing: border-box;
 }
 
+html {
+  overflow-y: auto;
+}
+
 body {
   margin: 0;
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", "Noto Sans TC", sans-serif;
-  background: #f3f4f6;
-  color: #111827;
+  background: var(--ms-bg);
+  color: var(--ms-fg);
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
 }
 
 button {
@@ -30,7 +41,9 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
-summary:focus-visible {
+summary:focus-visible,
+[role="combobox"]:focus-visible,
+[role="progressbar"]:focus-visible {
   outline: 2px solid #111827;
   outline-offset: 2px;
 }

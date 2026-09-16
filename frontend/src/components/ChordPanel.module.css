@@ -1,0 +1,6 @@
+/* 模組：和弦進行面板（外層收合動畫走 Collapsible.module.css）。 */
+.grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}

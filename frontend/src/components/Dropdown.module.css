@@ -1,0 +1,113 @@
+/* 模組：下拉選單動畫（唯一實作，規範來源「下拉式選單動畫.txt」）。
+ * 行為：點擊觸發器展開/收合、點外部關閉、箭頭旋轉、hover 反饋。
+ * 全站所有選單一律引用 <Dropdown/>，禁各自重寫動畫。
+ */
+.wrap {
+  position: relative;
+  user-select: none;
+  min-width: 0;
+}
+
+.trigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background-color: var(--ms-surface);
+  border: 1px solid #ccc;
+  border-radius: var(--ms-radius-md);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow var(--ms-expand-duration) var(--ms-expand-ease),
+    background-color var(--ms-expand-duration) var(--ms-expand-ease);
+}
+
+.trigger:hover {
+  background-color: var(--ms-trigger-bg-hover);
+}
+
+.wrap[data-open="true"] .trigger {
+  box-shadow: var(--ms-shadow-open);
+}
+
+.label {
+  font-size: 16px;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 小箭頭：純 CSS 三角，展開時旋轉向上 */
+.arrow {
+  flex: none;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #555;
+  transition: transform var(--ms-expand-duration) var(--ms-expand-ease);
+}
+
+.wrap[data-open="true"] .arrow {
+  transform: rotate(180deg);
+}
+
+.options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--ms-surface);
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0 0 var(--ms-radius-md) var(--ms-radius-md);
+  box-shadow: var(--ms-shadow-menu);
+  overflow: hidden;
+  z-index: 10;
+  opacity: 0;
+  transform: scaleY(0);
+  transform-origin: top;
+  visibility: hidden;
+  transition: transform var(--ms-expand-duration) var(--ms-expand-ease),
+    opacity var(--ms-expand-duration) var(--ms-expand-ease),
+    visibility var(--ms-expand-duration);
+}
+
+.wrap[data-open="true"] .options {
+  opacity: 1;
+  transform: scaleY(1);
+  visibility: visible;
+}
+
+.option {
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--ms-fg);
+  transition: background-color var(--ms-hover-duration) ease;
+}
+
+.option:hover {
+  background-color: var(--ms-option-bg-hover);
+}
+
+.option[data-active="true"] {
+  background-color: var(--ms-accent-soft);
+}
+
+/* 緊湊型（工具列內的小選單）：同動畫，只改密度 */
+.compact .trigger {
+  padding: 6px 12px;
+  border-radius: var(--ms-radius-sm);
+}
+
+.compact .label {
+  font-size: 13px;
+}
+
+.compact .option {
+  padding: 8px 12px;
+  font-size: 13px;
+}

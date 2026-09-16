@@ -1,0 +1,29 @@
+/* 模組：設計 tokens（CSS 唯一真相，對應 styles/theme.ts 同名數值）。
+ * 改數值時兩邊同步（見根目錄 DESIGN.md）。
+ * 展開/下拉動效時長取自「下拉式選單動畫.txt」規範：0.3s ease（使用者指定，全站選單/收合共用）。
+ */
+:root {
+  --ms-bg: #f3f4f6;
+  --ms-surface: #ffffff;
+  --ms-subtle: #f9fafb;
+  --ms-border: #e5e7eb;
+  --ms-border-strong: #d1d5db;
+  --ms-fg: #111827;
+  --ms-fg-2: #6b7280;
+  --ms-meta: #9ca3af;
+  --ms-accent: #2563eb;
+  --ms-accent-soft: #eff6ff;
+  --ms-accent-border: #bfdbfe;
+  --ms-danger: #dc2626;
+  --ms-success: #059669;
+  --ms-shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --ms-shadow-open: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --ms-shadow-menu: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --ms-radius-sm: 6px;
+  --ms-radius-md: 8px;
+  --ms-expand-duration: 0.3s;
+  --ms-expand-ease: ease;
+  --ms-hover-duration: 0.2s;
+  --ms-trigger-bg-hover: #f9f9f9;
+  --ms-option-bg-hover: #f0f0f0;
+}

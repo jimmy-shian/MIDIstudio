@@ -1,0 +1,85 @@
+/* 模組：收合面板（in-flow 版下拉動畫，與 Dropdown 同規範）。
+ * 觸發器 hover 反饋＋箭頭旋轉＋內容 scaleY/opacity/visibility 展開，三者時長一致 0.3s ease。
+ * 全站所有收合區（和弦/設定等）一律引用 <Collapsible/>，禁各自寫 <details> 動畫。
+ */
+.panel {
+  background: var(--ms-surface);
+  border: 1px solid var(--ms-border);
+  border-radius: var(--ms-radius-md);
+  box-shadow: var(--ms-shadow);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--ms-fg-2);
+  transition: background-color var(--ms-expand-duration) var(--ms-expand-ease);
+  border-radius: var(--ms-radius-md);
+}
+
+.header:hover {
+  background-color: var(--ms-trigger-bg-hover);
+}
+
+.title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.subtitle {
+  font-weight: 400;
+  color: var(--ms-meta);
+}
+
+.arrow {
+  flex: none;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #555;
+  transition: transform var(--ms-expand-duration) var(--ms-expand-ease);
+}
+
+.panel[data-open="true"] .arrow {
+  transform: rotate(180deg);
+}
+
+.bodyWrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: grid-template-rows var(--ms-expand-duration) var(--ms-expand-ease),
+    opacity var(--ms-expand-duration) var(--ms-expand-ease),
+    transform var(--ms-expand-duration) var(--ms-expand-ease),
+    visibility var(--ms-expand-duration);
+}
+
+.panel[data-open="true"] .bodyWrap {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+  transform: scaleY(1);
+}
+
+.bodyInner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.body {
+  padding: 8px 12px 12px;
+}

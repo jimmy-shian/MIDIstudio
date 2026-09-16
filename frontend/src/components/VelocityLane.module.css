@@ -1,0 +1,48 @@
+/* 模組：力度 Lane。條高走 CSS 變數 --h（唯一動態值，JS 只傳數字），顏色走分級 class。 */
+.wrap {
+  background: var(--ms-surface);
+  border-top: 1px solid var(--ms-border);
+  padding: 8px 12px;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.title {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.lane {
+  display: flex;
+  gap: 3px;
+  overflow-x: auto;
+  align-items: flex-end;
+  min-height: 72px;
+}
+
+.bar {
+  width: 18px;
+  height: 72px;
+  background: var(--ms-subtle);
+  cursor: ns-resize;
+  display: flex;
+  align-items: flex-end;
+  border: 1px solid var(--ms-border);
+  border-radius: 3px;
+}
+
+.fill {
+  width: 100%;
+  height: var(--h);
+  border-radius: 0 0 2px 2px;
+}
+
+.fillVel1 { composes: fill; background: #868e96; }
+.fillVel2 { composes: fill; background: #63e6be; }
+.fillVel3 { composes: fill; background: #4dabf7; }
+.fillVel4 { composes: fill; background: #ff8787; }

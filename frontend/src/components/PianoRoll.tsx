@@ -5,10 +5,25 @@ import { useProjectStore } from "../store/useProjectStore";
 import { useViewStore } from "../store/viewStore";
 import { useSettingsStore } from "../store/settingsStore";
 import { midiToName } from "@midistudio/shared";
-import { velocityColor } from "../utils/velocity";
 import { beatsInView, pitchesInView, snapQuantize } from "../utils/grid";
-import { colors } from "../styles/theme";
+import styles from "./PianoRoll.module.css";
 import PianoRollControls from "./PianoRollControls";
+
+// 力度分級（與 velocity.ts 閾值一致，樣式走 CSS class，不用 inline background）
+function velocityClass(v: number): string {
+  if (v >= 100) return styles.vel4;
+  if (v >= 85) return styles.vel3;
+  if (v >= 65) return styles.vel2;
+  return styles.vel1;
+}
+
+function colsClass(n: number): string {
+  if (n <= 4) return styles.cols4;
+  if (n <= 8) return styles.cols8;
+  if (n <= 16) return styles.cols16;
+  if (n <= 32) return styles.cols32;
+  return styles.cols64;
+}
 
 export default function PianoRoll() {
   const tracks = useProjectStore((s) => s.tracks);
@@ -33,39 +48,41 @@ export default function PianoRoll() {
     return m;
   }, [track, startBeat, beatsVisible]);
 
-  if (!track) return <div>無音軌</div>;
+  if (!track) return <div className={styles.empty}>無音軌</div>;
 
   return (
-    <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, background: colors.surface }}>
+    <div className={styles.root}>
       <PianoRollControls />
       <div
-        style={{ flex: 1, overflow: "auto", padding: 12 }}
+        className={styles.scroll}
         onWheel={(e) => {
           if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) pan(e.deltaX > 0 ? 4 : -4);
         }}
       >
-        <div style={{ display: "grid", gridTemplateColumns: `56px repeat(${cols.length}, 28px)`, gap: 2 }}>
+        <div className={`${styles.grid} ${colsClass(cols.length)}`}>
           <div />
-          {cols.map((b) => <div key={b} style={{ textAlign: "center", fontSize: 10, color: colors.tertiary }}>{b % 4 === 0 ? `:${b / 4 + 1}` : b}</div>)}
+          {cols.map((b) => <div key={b} className={styles.colLabel}>{b % 4 === 0 ? `:${b / 4 + 1}` : b}</div>)}
           {rows.map((p) => (
             <Fragment key={p}>
-              <div style={{ fontSize: 10, color: p % 12 === 0 ? colors.text : colors.tertiary, fontWeight: p % 12 === 0 ? 600 : 400 }}>
+              <div className={p % 12 === 0 ? styles.rowLabelC : styles.rowLabel}>
                 {midiToName(p)}
               </div>
               {cols.map((b) => {
                 const n = noteMap.get(`${p}:${b}`);
                 const barStart = b % 4 === 0;
+                const cls = [
+                  styles.cell,
+                  n ? velocityClass(n.velocity) : "",
+                  !n && p % 12 === 0 ? styles.cellPitchC : "",
+                  !n && barStart ? styles.cellBar : "",
+                ].filter(Boolean).join(" ");
                 return (
                   <div key={`${p}-${b}`}
                     onClick={() => {
                       if (n) localApply([{ op: "delete_notes", trackId: track.id, noteIds: [n.id] }]);
                       else localApply([{ op: "add_notes", trackId: track.id, notes: [{ pitch: p, startBeat: snapQuantize(b, snap), durBeat: snap, velocity: defaultVelocity[track.kind] }] }]);
                     }}
-                    style={{
-                      width: 28, height: 18, cursor: "pointer", borderRadius: 3,
-                      background: n ? velocityColor(n.velocity) : p % 12 === 0 ? "#f3f4f6" : colors.surface,
-                      border: `1px solid ${n ? velocityColor(n.velocity) : barStart ? colors.borderStrong : colors.border}`,
-                    }} />
+                    className={cls} />
                 );
               })}
             </Fragment>

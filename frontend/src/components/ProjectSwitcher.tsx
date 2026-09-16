@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useProjectStore } from "../store/useProjectStore";
 import { createProject, deleteProject, fetchProject, listProjects, type ProjectMeta } from "../api/projectApi";
-import { btn, btnGhost, input } from "../styles/theme";
+import controls from "../styles/controls.module.css";
+import styles from "./ProjectSwitcher.module.css";
+import Dropdown from "./Dropdown";
 import { PlusIcon, TrashIcon } from "./icons";
 
-// 模組：工程切換（開/新/刪/改名）。列表走後端 SQLite。
+// 模組：工程切換（開/新/刪/改名）。工程選單走共用 Dropdown，列表走後端 SQLite。
 export default function ProjectSwitcher() {
   const currentId = useProjectStore((s) => s.currentProjectId);
   const projectName = useProjectStore((s) => s.projectName);
@@ -54,18 +56,25 @@ export default function ProjectSwitcher() {
     void refresh();
   };
 
+  const options = metas.map((m) => ({ value: m.id, label: `${m.name}（${m.noteCount}音）` }));
+
   return (
-    <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-      <select value={currentId ?? ""} onChange={(e) => { if (e.target.value) void open(e.target.value); }}
-        title="切換工程" style={{ ...input, maxWidth: 180 }}>
-        {currentId === null && <option value="">（本地快取）</option>}
-        {metas.map((m) => <option key={m.id} value={m.id}>{m.name}（{m.noteCount}音）</option>)}
-      </select>
+    <div className={styles.wrap}>
+      <span className={styles.menu}>
+        <Dropdown
+          value={currentId ?? ""}
+          options={options}
+          onChange={(v) => { if (v) void open(v); }}
+          label="切換工程"
+          placeholder="（本地快取）"
+          compact
+        />
+      </span>
       <input value={nameText} onChange={(e) => setNameText(e.target.value)} onBlur={() => void commitName()}
         onKeyDown={(e) => { if (e.key === "Enter") (e.target as HTMLInputElement).blur(); }}
-        style={{ ...input, width: 110 }} title="工程名（改名後自動存）" />
-      <button style={btn} onClick={() => void create()} title="新工程"><PlusIcon size={14} />新增</button>
-      <button style={btnGhost} onClick={() => void remove()} disabled={!currentId} title="刪除目前工程">
+        className={`${controls.input} ${styles.nameInput}`} title="工程名（改名後自動存）" />
+      <button className={controls.btn} onClick={() => void create()} title="新工程"><PlusIcon size={14} />新增</button>
+      <button className={controls.btnGhost} onClick={() => void remove()} disabled={!currentId} title="刪除目前工程">
         <TrashIcon size={14} />
       </button>
     </div>
