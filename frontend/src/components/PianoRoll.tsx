@@ -78,7 +78,16 @@ export default function PianoRoll() {
                 ].filter(Boolean).join(" ");
                 return (
                   <div key={`${p}-${b}`}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={n ? `刪除 ${midiToName(p)} 第 ${b} 拍` : `在 ${midiToName(p)} 第 ${b} 拍加音`}
                     onClick={() => {
+                      if (n) localApply([{ op: "delete_notes", trackId: track.id, noteIds: [n.id] }]);
+                      else localApply([{ op: "add_notes", trackId: track.id, notes: [{ pitch: p, startBeat: snapQuantize(b, snap), durBeat: snap, velocity: defaultVelocity[track.kind] }] }]);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key !== "Enter" && e.key !== " ") return;
+                      e.preventDefault();
                       if (n) localApply([{ op: "delete_notes", trackId: track.id, noteIds: [n.id] }]);
                       else localApply([{ op: "add_notes", trackId: track.id, notes: [{ pitch: p, startBeat: snapQuantize(b, snap), durBeat: snap, velocity: defaultVelocity[track.kind] }] }]);
                     }}
