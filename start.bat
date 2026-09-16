@@ -10,7 +10,7 @@ if errorlevel 1 (
 )
 
 if not exist "node_modules" (
-  echo [1/4] Installing dependencies (first run, may take a few minutes)...
+  echo [1/4] Installing dependencies - first run, may take a few minutes...
   call npm install
   if errorlevel 1 (
     echo [ERROR] npm install failed.
@@ -29,11 +29,11 @@ if not exist "backend\.env" (
 )
 
 echo [3/4] Starting backend (:3001) + frontend (:5173)...
-start "MIDIstudio Server" cmd /k "cd /d ""%~dp0"" && npm run dev"
+start "MIDIstudio Server" /D "%~dp0" cmd /k npm run dev
 
 echo [4/4] Waiting for servers, then opening browser...
 timeout /t 12 /nobreak >nul
-start http://localhost:5173
+start "" http://localhost:5173
 
 echo.
 echo MIDIstudio is starting. Keep the "MIDIstudio Server" window open.

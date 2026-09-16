@@ -1,7 +1,8 @@
 # MIDIstudio — React 三層完整架構
 
 ## 1. 前端 UI 操作層 `frontend/`（React + Vite + Zustand + Tone.js）
-- 風格：淺灰極簡 SaaS（`src/styles/theme.ts` tokens＋`src/styles/index.css` 基座）；圖示一律 `src/components/icons.tsx` 內聯 SVG，禁 emoji／字元圖示
+- 風格：淺灰極簡 SaaS（`src/styles/tokens.css` 變數＋`src/styles/controls.module.css` 共用按鈕/輸入/卡片＋各組件 `.module.css`，禁 inline style；`src/styles/theme.ts` 只留 JS 側 token 對照）；圖示一律 `src/components/icons.tsx` 內聯 SVG，禁 emoji／字元圖示
+- 展開/選單動畫唯一實作：`src/components/Dropdown.tsx`＋`Dropdown.module.css`、收合面板 `src/components/Collapsible.tsx`＋`Collapsible.module.css`（皆源自「下拉式選單動畫.txt」：觸發器 hover 反饋＋箭頭旋轉＋選項 scaleY/opacity/visibility 0.3s ease＋點外部關閉）；工程選單/拍數/網格/八度選單與和弦/設定面板一律引用此二者
 - `src/App.tsx` 版面：TransportBar / ChordPanel＋SettingsPanel / TrackList＋琴格卡＋ChatPanel
 - `src/App.tsx` 版面：TransportBar / ChordPanel / TrackList + PianoRoll + ChatPanel
 - `src/store/useProjectStore.ts`：zustand 全域工程狀態＋currentProjectId/projectName；`src/store/selectors.ts`：快照選擇器；`src/store/history.ts`：undo/redo 純函數（50 步上限，只存工程欄位）
@@ -10,16 +11,18 @@
 - `src/hooks/useUndoShortcuts.ts`：Ctrl+Z / Ctrl+Shift+Z / Ctrl+Y（輸入框不攔截，復原前停播）
 - `src/audio/`：`ToneEngine.ts` 薄編排 + `instruments.ts` 旋律合成 + `drums.ts` 鼓合成（36 kick/38 snare/hats）
 - `src/api/`：`agentClient.ts` 只留 POST /api/agent；`midiClient.ts` 管 export/import；`projectApi.ts` 管工程 CRUD
-- `src/hooks/`：`useAgent.ts` 對話邏輯、`usePlayback.ts` 播放控制（前身在組件內聯）
+- `src/hooks/`：`useAgent.ts` 對話邏輯、`usePlayback.ts` 播放控制＋進度（100ms 輪詢 Transport 秒數，seek 從目標拍重播，顯示沿用全曲總長）
+- `src/audio/`：`ToneEngine.ts` 薄編排 + `projectEndBeat` 總拍真相 + `playProject(project, onDone, fromBeat?)` + `getPlaybackSeconds/formatPlaybackTime`（合成細節在 `instruments.ts` 旋律合成 + `drums.ts` 鼓合成（36 kick/38 snare/hats））
 - `src/utils/download.ts`：blob 下載共用
 - `src/components/`：
-  - TransportBar：ProjectSwitcher + 播放/停止 + 復原/重做 + BPM/匯出 MIDI + 匯入按鈕 + 自動存檔指示
+  - TransportBar：ProjectSwitcher + 播放/停止 + PlaybackProgress 進度條（點擊/左右鍵跳轉＋時間顯示） + 復原/重做 + BPM/匯出 MIDI + 匯入按鈕 + 自動存檔指示（sticky 頂欄）
+  - App：min-height 版面可整頁下捲，窄屏工作區換行；ChordPanel＋SettingsPanel 為 Collapsible 收合式，TrackList/ChatPanel sticky 側欄
   - TrackList：選軌、加旋律/鼓軌、刪軌
   - PianoRoll：視窗渲染（預設 16 拍 C3–C5，可捲動縮放，格數/snap 可調），點格加音、點音刪音（音塊色=力度）
   - PianoRollControls：◀▶/＋－/音域/snap/小節顯示；VelocityLane 只顯示窗內音
   - ChordPanel：一鍵寫入進行（吃設定的力度/八度）；SettingsPanel：力度/網格/和弦客製化（收合式）
   - ProjectSwitcher：工程下拉切換＋新工程＋刪除＋改名（走 SQLite）
-  - ChatPanel：自然語言作曲（經 useAgent）
+  - ChatPanel：自然語言作曲（經 useAgent；輸入框預設 3rem 可垂直拉伸，Enter 送出 / Shift+Enter 換行）
   - MidiImportButton：.mid 匯入（POST /api/midi/import）
 
 跑：`npm run dev --workspace=@midistudio/frontend` -> http://localhost:5173

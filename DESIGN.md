@@ -1,7 +1,8 @@
 # MIDIstudio DESIGN.md — 品牌契約（參照 nexu-io/open-design 的 DESIGN.md＋tokens.css 做法）
 
-> 本文件是 agent 與人改 UI 時的最高指導。數值唯一來源是 `frontend/src/styles/theme.ts`；
-> 下表是它的文字版，改數值只改 theme.ts，改完同步下表。
+> 本文件是 agent 與人改 UI 時的最高指導。數值唯一來源是 `frontend/src/styles/tokens.css`
+> （CSS 變數）＋ `frontend/src/styles/theme.ts`（JS 側同值對照）；下表是它的文字版，
+> 改數值兩邊同步後改下表。組件樣式一律走 `.module.css` 引用共用，禁 inline style。
 
 ## 1. 品牌三句話
 
@@ -49,7 +50,9 @@
 ## 7. 無障礙與動效
 
 - 全站 `:focus-visible` 黑色 2px 描邊（鍵盤用戶找得到焦點）。
-- 動效只許 150–200ms ease-out（hover/收合）；播放與拖曳力度條不加動效（跟手優先）。
+- 動效：一般 hover 150–200ms ease-out；下拉選單/收合面板依「下拉式選單動畫.txt」用 0.3s ease
+  （觸發器 hover 反饋＋箭頭旋轉＋scaleY/opacity/visibility 展開，實作見 `Dropdown`/`Collapsible` 共用模組）。
+  播放與拖曳力度條不加動效（跟手優先）。
 - 琴格音塊不只靠顏色：C 音列加粗 label＋淺灰底，色盲可辨。
 
 ## 出處
