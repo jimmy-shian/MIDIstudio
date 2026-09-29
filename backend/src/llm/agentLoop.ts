@@ -1,12 +1,17 @@
 // 薄編排層：只留迴圈流程，摘要/轉換/fallback 已拆到同目錄模組。
 import type { ProjectState, ToolOp } from "@midistudio/shared";
-import { TOOL_SCHEMAS, applyOps, validateOps } from "@midistudio/shared";
+import { TOOL_SCHEMAS } from "@midistudio/shared";
 import { SYSTEM_PROMPT } from "./systemPrompt.js";
+import { executeCompositionOps } from "./compositionEngine/index.js";
+import { buildCriticReviewInstruction } from "./musicCritic/index.js";
 import { chatWithTools, resolveLlmConfig } from "./client.js";
 import { projectToText } from "./projectContext.js";
 import { toolCallsToOps } from "./toolConverter.js";
 import { fallbackOps } from "./fallback.js";
 import { appendTurn, getHistory, newSessionId, type HistoryMsg } from "../db/conversations.js";
+
+/** 留出多輪時間供分階段編曲、Critic 檢查與必要修改。 */
+export const MAX_COMPOSITION_ROUNDS = 8;
 
 export interface AgentResult {
   reply: string;
@@ -26,10 +31,15 @@ export async function runAgent(
 
   if (!cfg.apiKey) {
     const fb = fallbackOps(prompt, project);
-    const errs = validateOps(project, fb.ops);
-    if (errs.length) return { reply: "參數錯誤：" + errs.join(";"), ops: [], reports: [], project, sessionId };
-    const { project: next, reports } = applyOps(project, fb.ops);
-    const out = { reply: fb.reply, ops: fb.ops, reports: reports.map((r) => r.message), project: next, sessionId };
+    let next = project;
+    const reports: string[] = [];
+    for (let i = 0; i < fb.ops.length; i += 2) {
+      const result = executeCompositionOps(next, fb.ops.slice(i, i + 2));
+      if (!result.ok) return { reply: "參數錯誤：" + result.errors.join(";"), ops: [], reports: [], project, sessionId };
+      next = result.project;
+      reports.push(...result.reports.map((r) => r.message));
+    }
+    const out = { reply: fb.reply, ops: fb.ops, reports, project: next, sessionId };
     appendTurn(sessionId, prompt, `${fb.reply}（${out.reports.join("；")}）`);
     return out;
   }
@@ -47,11 +57,18 @@ export async function runAgent(
   // 小模型常見：洋洋灑灑寫文字、一顆音都不調。這種情況只給一次補考機會。
   let nudged = false;
 
-  for (let round = 0; round < 3; round++) {
-    const msg = await chatWithTools({ config: cfg, messages, tools: TOOL_SCHEMAS });
+  for (let round = 0; round < MAX_COMPOSITION_ROUNDS; round++) {
+    const finalReviewRound = round === MAX_COMPOSITION_ROUNDS - 1;
+    const msg = await chatWithTools({
+      config: cfg,
+      messages,
+      tools: TOOL_SCHEMAS,
+      ...(finalReviewRound ? { toolChoice: "none" } : {}),
+    });
     messages.push(msg);
     if (msg.content) lastReply = msg.content;
     const ops = toolCallsToOps(msg);
+    if (finalReviewRound) break;
     if (!ops.length) {
       if (!nudged && allOps.length === 0) {
         nudged = true;
@@ -60,17 +77,16 @@ export async function runAgent(
       }
       break;
     }
-    const errs = validateOps(current, ops);
-    if (errs.length) {
-      messages.push({ role: "user", content: `修正這些錯誤：${errs.join(";")}` });
+    const applied = executeCompositionOps(current, ops);
+    if (!applied.ok) {
+      messages.push({ role: "user", content: `修正這些錯誤：${applied.errors.join(";")}` });
       continue;
     }
-    const applied = applyOps(current, ops);
     current = applied.project;
     allOps.push(...ops);
     for (const r of applied.reports) allReports.push(r.message);
-    messages.push({ role: "user", content: `已執行：${applied.reports.map((r) => r.message).join("；")}。若已滿足需求就用中文總結結束，不必再調工具。` });
-    // 不提前 break：模型做完會自己停（回無工具調用）；3 輪跑滿給多步任務留空間。
+    messages.push({ role: "user", content: buildCriticReviewInstruction(applied.reports.map((r) => r.message)) });
+    // 不提前 break：Critic 檢查後模型可再修正；模型無後續工具呼叫時停止，否則最多 8 輪。
   }
   // 注意：不再 applyOps(project, allOps) 重放一次。舊寫法把整份工程複製+重算第二遍，
   // 記憶體/CPU 直接翻倍；此處 current 已是累積結果，直接回傳即可。
