@@ -10,12 +10,12 @@
 |---|---|---|---|
 | K.G.Studio（Apache-2.0+附加條款）| LLM 用 tool calling 直接改 Track/Note；全域 Chord/Tempo/Key 軌；project-aware（把工程摘要餵給模型省 token）| `shared/tools.ts` 8 個 op、`shared/types.ts` ToolOp、`backend/llm/projectContext.ts`、`backend/llm/agentLoop.ts` 三輪迴圈 | 它的任何原始碼、Region/OPFS/確認框流程都沒拿 |
 | MidiEditor AI（GPL-3.0）| MidiPilot 式 Agent loop＋工具校驗失敗塞回重試；「MCP server 讓外部模型調 MIDI」這個點子 | `backend/llm/agentLoop.ts` validate→重試、`backend/src/mcp/` 16 tools | 它的 32 個工具實作、Qt/C++ 碼一行沒碰 |
-| OpenDaw（GPL-3.0）| 反面參考：完整 DAW 工程量太大，第一版只做 MIDI AI（readme 排序第⑤即此意）| `readme.txt` 的排序決策 | 全部都沒拿 |
+| OpenDaw（GPL-3.0）| 反面參考：完整 DAW 工程量太大，第一版只做 MIDI AI（README 排序第⑤即此意）| `README.md` 的排序決策 | 全部都沒拿 |
 | ComposeYogi（MIT）| React＋Tone.js＋Zustand；`components/store/hooks/api` 分層 | `frontend/package.json` 技術選型、`frontend/src/` 目錄結構 | 它的 Next.js 頁面、64 樂器、錄音程式碼都沒拿 |
 | Boundless MIDI Editor（MIT）| 極簡 Piano Roll＋MIDI 匯出入＋Tone.js 播放 | `frontend/src/components/PianoRoll.tsx`、`frontend/src/api/midiClient.ts`、`frontend/src/audio/ToneEngine.ts` | 它的 Canvas 實作、FastAPI/Basic Pitch 後端都沒拿 |
 | nexu-io/open-design（Apache-2.0）| DESIGN.md＋tokens.css 包形；minimal／notion 包的淺色 token 哲學（hairline 邊、黑即品牌色、微陰影）| 根目錄 `DESIGN.md`、前端主題（色值為自寫對齊，未複製其檔案；linear-app 深色系棄用）| 未複製任何檔案 |
 
-驗證方法：全 repo 搜特徵字串（`KGStudio`、`K.G.Studio`、`MidiPilot`、`Tracktion`、`ComposeYogi`、`basic-pitch`）應只出現在本文件、`readme.txt`、`ARCHITECTURE.md` 的授權段落，`frontend/ shared/ backend/` 原始碼零命中。
+驗證方法：全 repo 搜特徵字串（`KGStudio`、`K.G.Studio`、`MidiPilot`、`Tracktion`、`ComposeYogi`、`basic-pitch`）應只出現在本文件、`README.md`、`ARCHITECTURE.md` 的授權段落，`frontend/ shared/ backend/` 原始碼零命中。
 
 ## 1. 參考專案授權一覽
 
