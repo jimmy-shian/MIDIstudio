@@ -42,13 +42,15 @@ export const CHORDS: Record<string, number[]> = {
   add9: [0, 4, 7, 14],
 };
 
-/** 常用進行（羅馬數字，相對大調）。 */
+/** 常用進行（羅馬數字，相對大調/小調）。 */
 export const PROGRESSIONS: Record<string, string[]> = {
   pop_1564: ["I", "V", "vi", "IV"],
   sensitive: ["vi", "IV", "I", "V"],
   jazz_251: ["ii", "V", "I"],
   canon: ["I", "V", "vi", "iii", "IV", "I", "IV", "V"],
   minor_1645: ["i", "VI", "III", "VII"],
+  minor_251: ["ii°", "V7", "i"],
+  minor_pop: ["i", "iv", "v", "i"],
 };
 
 /** 大調羅馬數字 -> 級數半音 + 和弦性質 */
@@ -60,6 +62,38 @@ export const ROMAN_MAJOR: Record<string, { semitone: number; chord: string }> = 
   V: { semitone: 7, chord: "major" },
   vi: { semitone: 9, chord: "minor" },
   vii: { semitone: 11, chord: "diminished" },
+  "vii°": { semitone: 11, chord: "diminished" },
+  viidim: { semitone: 11, chord: "diminished" },
+  Imaj7: { semitone: 0, chord: "major7" },
+  ii7: { semitone: 2, chord: "minor7" },
+  iii7: { semitone: 4, chord: "minor7" },
+  IVmaj7: { semitone: 5, chord: "major7" },
+  V7: { semitone: 7, chord: "dominant7" },
+  vi7: { semitone: 9, chord: "minor7" },
+};
+
+/** 自然小調羅馬數字 -> 級數半音 + 和弦性質 */
+export const ROMAN_MINOR: Record<string, { semitone: number; chord: string }> = {
+  i: { semitone: 0, chord: "minor" },
+  "ii°": { semitone: 2, chord: "diminished" },
+  iidim: { semitone: 2, chord: "diminished" },
+  ii: { semitone: 2, chord: "diminished" },
+  III: { semitone: 3, chord: "major" },
+  bIII: { semitone: 3, chord: "major" },
+  iv: { semitone: 5, chord: "minor" },
+  v: { semitone: 7, chord: "minor" },
+  V: { semitone: 7, chord: "major" }, // 和聲小調常用 V
+  V7: { semitone: 7, chord: "dominant7" }, // 和聲小調常用 V7
+  VI: { semitone: 8, chord: "major" },
+  bVI: { semitone: 8, chord: "major" },
+  VII: { semitone: 10, chord: "major" },
+  bVII: { semitone: 10, chord: "major" },
+  "vii°": { semitone: 11, chord: "diminished" },
+  viidim: { semitone: 11, chord: "diminished" },
+  vii: { semitone: 11, chord: "diminished" },
+  i7: { semitone: 0, chord: "minor7" },
+  iv7: { semitone: 5, chord: "minor7" },
+  VImaj7: { semitone: 8, chord: "major7" },
 };
 
 export function pcName(pc: number): string {
@@ -93,7 +127,6 @@ export function chordNotes(rootMidi: number, chordName: string): number[] {
 
 /** 給定調性（如 keyRoot=0=C, scale=major），回傳一度到八度內合法 pitch classes。 */
 export function scalePitchClasses(keyRoot: number, scale: string): number[] {
-  const iv = SCALES[scale];
-  if (!iv) throw new Error(`unknown scale: ${scale}`);
+  const iv = SCALES[scale] ?? SCALES.major;
   return iv.map((s) => (keyRoot + s) % 12);
 }

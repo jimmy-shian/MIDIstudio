@@ -13,8 +13,8 @@ export const VELOCITY_DEFAULTS: Record<TrackKind, number> = {
 export const CHORD_DEFAULT_VELOCITY = 80;
 export const CHORD_DEFAULT_OCTAVE = 3;
 
-/** 琴格 snap 預設：1/4 拍 */
+/** 琴格 snap 預設：1 拍 */
 export const SNAP_DEFAULT = 1;
 
-/** 可選 snap 格 */
-export const SNAP_OPTIONS = [1, 0.5, 0.25] as const;
+/** 可選 snap 格（含三連音）：1、0.5、1/3（八分三連）、0.25、1/6（十六分三連） */
+export const SNAP_OPTIONS = [1, 0.5, 1 / 3, 0.25, 1 / 6] as const;

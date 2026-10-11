@@ -10,3 +10,5 @@ export * from "./op-defaults.js";
 export * from "./gm.js";
 export * from "./form.js";
 export * from "./tool-docs.js";
+export * from "./instruments-registry.js";
+export * from "./music-compiler.js";
