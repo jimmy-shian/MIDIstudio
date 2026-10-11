@@ -29,18 +29,25 @@ export default function VelocityLane() {
   const track = useProjectStore((s) => s.tracks.find((t) => t.id === s.selectedTrackId) ?? s.tracks[0]);
   const startBeat = useViewStore((s) => s.startBeat);
   const beatsVisible = useViewStore((s) => s.beatsVisible);
-  const { setVelocity, setAll } = useVelocityEdit();
+  const { setVelocity, setAll, applyRamp } = useVelocityEdit();
   const dragId = useRef<string | null>(null);
   const pending = useRef<{ trackId: string; noteId: string; velocity: number } | null>(null);
   const rafId = useRef<number>(0);
 
-  // 只顯示視窗內的音，並與琴格同窗；排序只在該軌 notes 引用變化時重算
+  // 只顯示視窗內的音，並與琴格同窗；排序只在該軌 notes 引用變化時重算（Tick 精度）
   const notes = useMemo(() => {
     if (!track) return [];
     const end = startBeat + beatsVisible;
     return track.notes
-      .filter((n) => n.startBeat >= startBeat && n.startBeat < end)
-      .sort((a, b) => a.startBeat - b.startBeat)
+      .filter((n) => {
+        const s = n.startTick !== undefined ? n.startTick / 960 : n.startBeat;
+        return s >= startBeat && s < end;
+      })
+      .sort((a, b) => {
+        const sa = a.startTick !== undefined ? a.startTick : a.startBeat * 960;
+        const sb = b.startTick !== undefined ? b.startTick : b.startBeat * 960;
+        return sa - sb;
+      })
       .slice(0, 128);
   }, [track, startBeat, beatsVisible]);
 
@@ -79,6 +86,8 @@ export default function VelocityLane() {
         <strong className={styles.title}>力度 {track.name} ({notes.length})</strong>
         <button className={controls.btn} onClick={() => setAll(track.id, 90)}>全部 90</button>
         <button className={controls.btn} onClick={() => setAll(track.id, 70)}>全部 70</button>
+        <button className={controls.btn} onClick={() => applyRamp(track.id, 60, 110)} title="由弱漸強">漸強 ↗</button>
+        <button className={controls.btn} onClick={() => applyRamp(track.id, 110, 60)} title="由強漸弱">漸弱 ↘</button>
         <span className={controls.muted}>上下拖曳色條改力度</span>
       </div>
       <div className={styles.lane}>

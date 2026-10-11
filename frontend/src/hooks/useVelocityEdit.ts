@@ -28,5 +28,23 @@ export function useVelocityEdit() {
     ]);
   };
 
-  return { setVelocity, setAll };
+  /** 線性坡度：視窗內音依時間排序，從 from 線性漸變至 to（漸強/漸弱）。 */
+  const applyRamp = (trackId: string, from: number, to: number) => {
+    const st = useProjectStore.getState();
+    const track = st.tracks.find((t) => t.id === trackId);
+    if (!track || track.notes.length < 2) return;
+    const sorted = track.notes.slice().sort((a, b) => {
+      const sa = a.startTick !== undefined ? a.startTick : 0;
+      const sb = b.startTick !== undefined ? b.startTick : 0;
+      return sa - sb;
+    });
+    const n = sorted.length;
+    const edits = sorted.map((note, i) => ({
+      id: note.id,
+      velocity: Math.max(1, Math.min(127, Math.round(from + ((to - from) * i) / (n - 1)))),
+    }));
+    st.localApply([{ op: "update_velocities", trackId, edits }]);
+  };
+
+  return { setVelocity, setAll, applyRamp };
 }

@@ -1,4 +1,6 @@
-/* 模組：頂部傳輸列（工程切換＋播放/停止＋進度＋BPM＋匯出入＋存檔狀態）。 */
+/* 模組：頂部傳輸列（工程切換＋播放/停止＋進度＋BPM＋匯出入＋存檔狀態）。
+ * 非 sticky：工具列在 .app 固定視口的頂列，捲動發生在下方 .main，永不互相覆蓋。
+ * z-index 保留給 Dropdown 浮層。 */
 .bar {
   display: flex;
   gap: 8px;
@@ -7,9 +9,9 @@
   background: var(--ms-surface);
   border-bottom: 1px solid var(--ms-border);
   flex-wrap: wrap;
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 20;
+  flex: none;
 }
 
 .bpmLabel {

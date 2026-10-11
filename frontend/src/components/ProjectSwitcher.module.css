@@ -13,5 +13,7 @@
 }
 
 .nameInput {
-  width: 110px;
+  flex: 1 1 180px;
+  min-width: 150px;
+  max-width: 340px;
 }

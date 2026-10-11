@@ -1,4 +1,5 @@
 import type { ProjectState } from "@midistudio/shared";
+import { migrateProject } from "@midistudio/shared";
 
 // 模組：離線快取。後端 SQLite 為真相；後端沒開時靠這份快取撐住，恢復連線下次存檔即同步。
 // SSD 保護：localStorage 是同步磁碟 I/O（瀏覽器 profile 落 SSD），高頻直寫會卡主執行緒又耗抹寫。
@@ -53,6 +54,7 @@ export function loadCache(): CacheEntry | null {
     if (!raw) return migrateV1();
     const e = JSON.parse(raw) as CacheEntry;
     if (typeof e.project?.bpm !== "number" || !Array.isArray(e.project?.tracks)) return null;
+    e.project = migrateProject(e.project);
     return e;
   } catch {
     return null;
@@ -66,7 +68,7 @@ function migrateV1(): CacheEntry | null {
     if (!raw) return null;
     const p = JSON.parse(raw);
     if (typeof p.bpm !== "number" || !Array.isArray(p.tracks)) return null;
-    const entry: CacheEntry = { id: null, name: "未命名工程", project: p, savedAt: Date.now() };
+    const entry: CacheEntry = { id: null, name: "未命名工程", project: migrateProject(p), savedAt: Date.now() };
     localStorage.setItem(KEY, JSON.stringify(entry));
     localStorage.removeItem("midistudio:project:v1");
     return entry;

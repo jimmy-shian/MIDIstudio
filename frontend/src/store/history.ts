@@ -18,10 +18,14 @@ export const MAX_HISTORY = 50;
  * 過去 50 步歷史也不再是 50 份深拷貝。timeSig 只有兩個數字，順手複一份。 */
 export function snapshotOf(s: ProjectState): ProjectState {
   return {
+    schemaVersion: s.schemaVersion,
     bpm: s.bpm,
     keyRoot: s.keyRoot,
     scale: s.scale,
     timeSig: [s.timeSig[0], s.timeSig[1]],
+    sections: s.sections ? s.sections.slice() : undefined,
+    masterVolume: s.masterVolume,
+    masterEffects: s.masterEffects ? s.masterEffects.slice() : undefined,
     tracks: s.tracks,
     selectedTrackId: s.selectedTrackId,
   };

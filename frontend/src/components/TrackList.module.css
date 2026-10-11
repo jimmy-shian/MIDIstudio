@@ -1,13 +1,14 @@
-/* 模組：音軌列表。 */
+/* 模組：音軌列表。
+ * sticky 相對 .main（工具列在其外、不會蓋住）；max-height 留兩列工具列餘裕。 */
 .panel {
   composes: card from "../styles/controls.module.css";
   width: 220px;
   flex: none;
   padding: 12px;
   overflow-y: auto;
-  max-height: calc(100vh - 220px);
+  max-height: calc(100vh - 120px);
   position: sticky;
-  top: 76px;
+  top: 12px;
 }
 
 .title {
@@ -68,4 +69,76 @@
   gap: 6px;
   flex-wrap: wrap;
   margin-top: 4px;
+}
+
+.masterRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  margin-bottom: 8px;
+  border-radius: var(--ms-radius-sm);
+  background: var(--ms-surface);
+  border: 1px solid var(--ms-border);
+}
+
+.masterLabel {
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ctlRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 11px;
+}
+
+.ctlLabel {
+  min-width: 64px;
+  color: var(--ms-meta);
+  white-space: nowrap;
+}
+
+.slider {
+  flex: 1;
+  min-width: 0;
+}
+
+.msBtn {
+  composes: btnGhost from "../styles/controls.module.css";
+  padding: 0 5px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  margin-left: auto;
+}
+
+.msBtn + .msBtn {
+  margin-left: 4px;
+}
+
+.msOn {
+  background: var(--ms-accent-soft);
+  border-color: var(--ms-accent);
+  color: var(--ms-accent);
+}
+
+.fxRow {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.fxBtn {
+  composes: btnGhost from "../styles/controls.module.css";
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+.fxOn {
+  background: var(--ms-accent-soft);
+  border-color: var(--ms-accent);
 }

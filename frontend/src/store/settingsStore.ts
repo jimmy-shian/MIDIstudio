@@ -37,8 +37,10 @@ function load(): typeof DEFAULTS {
     const kinds: TrackKind[] = ["melody", "chords", "bass", "drums"];
     const defaultVelocity = { ...VELOCITY_DEFAULTS };
     for (const k of kinds) if (p.defaultVelocity?.[k] !== undefined) defaultVelocity[k] = num(p.defaultVelocity[k], defaultVelocity[k], 1, 127);
+    const validSnaps = [1, 0.5, 1 / 3, 0.25, 1 / 6];
+    const snap = validSnaps.some((s) => Math.abs(s - p.snap) < 1e-6) ? p.snap : DEFAULTS.snap;
     return {
-      snap: [1, 0.5, 0.25].includes(p.snap) ? p.snap : DEFAULTS.snap,
+      snap,
       defaultVelocity,
       chordVelocity: num(p.chordVelocity, DEFAULTS.chordVelocity, 1, 127),
       chordOctave: num(p.chordOctave, DEFAULTS.chordOctave, 1, 6),

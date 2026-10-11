@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useProjectStore } from "../store/useProjectStore";
 import { stopPlayback } from "../audio/ToneEngine";
+import { copyViewNotes, duplicateLastBar, pasteAtView } from "../utils/clipboard";
 
 // 模組：Ctrl+Z / Ctrl+Shift+Z / Ctrl+Y。在輸入框打字時不攔截；復原前先停播避免鬼音。
 function isTyping(): boolean {
@@ -31,6 +32,15 @@ export function useUndoShortcuts() {
         e.preventDefault();
         stopIfPlaying();
         useProjectStore.getState().redo();
+      } else if (k === "c" && !isTyping()) {
+        e.preventDefault();
+        copyViewNotes();
+      } else if (k === "v" && !isTyping()) {
+        e.preventDefault();
+        pasteAtView();
+      } else if (k === "d" && !isTyping()) {
+        e.preventDefault();
+        duplicateLastBar();
       }
     };
     window.addEventListener("keydown", onKey);

@@ -3,6 +3,7 @@ import { useProjectStore } from "../store/useProjectStore";
 import { snapshotOf } from "../store/history";
 import { loadCache, saveCache, saveCacheIdle } from "../persistence/storage";
 import { createProject, fetchProject, listProjects, saveProject } from "../api/projectApi";
+import { migrateProject } from "@midistudio/shared";
 
 // 模組：啟動載入＋防抖自動存。真相在後端 SQLite；後端沒開退回本地快取。
 //
@@ -71,18 +72,20 @@ export function usePersistence() {
   }, []);
 }
 
-type Fp = [number, number, string, number, number, unknown, string, string | null];
+type Fp = [number, number, string, number, number, unknown, unknown, unknown, number, string, string | null];
 
 function fingerprint(s: {
   bpm: number; keyRoot: number; scale: string; timeSig: [number, number];
-  tracks: unknown; projectName: string; currentProjectId: string | null;
+  tracks: unknown; sections?: unknown; masterEffects?: unknown; masterVolume?: number;
+  projectName: string; currentProjectId: string | null;
 }): Fp {
-  return [s.bpm, s.keyRoot, s.scale, s.timeSig[0], s.timeSig[1], s.tracks, s.projectName, s.currentProjectId];
+  return [s.bpm, s.keyRoot, s.scale, s.timeSig[0], s.timeSig[1], s.tracks, s.sections, s.masterEffects, s.masterVolume ?? 100, s.projectName, s.currentProjectId];
 }
 
 function fpSame(a: Fp, b: Fp): boolean {
   return a[0] === b[0] && a[1] === b[1] && a[2] === b[2] && a[3] === b[3]
-    && a[4] === b[4] && a[5] === b[5] && a[6] === b[6] && a[7] === b[7];
+    && a[4] === b[4] && a[5] === b[5] && a[6] === b[6] && a[7] === b[7]
+    && a[8] === b[8] && a[9] === b[9] && a[10] === b[10];
 }
 
 async function boot(): Promise<void> {
@@ -91,13 +94,15 @@ async function boot(): Promise<void> {
     const { projects } = await listProjects();
     if (projects.length) {
       const full = await fetchProject(projects[0].id);
-      st.switchProject(full.data, full.id, full.name);
-      saveCache({ id: full.id, name: full.name, project: full.data, savedAt: Date.now() });
+      const migrated = migrateProject(full.data);
+      st.switchProject(migrated, full.id, full.name);
+      saveCache({ id: full.id, name: full.name, project: migrated, savedAt: Date.now() });
       return;
     }
     const created = await createProject("未命名工程 1");
-    st.switchProject(created.data, created.id, created.name);
-    saveCache({ id: created.id, name: created.name, project: created.data, savedAt: Date.now() });
+    const migrated = migrateProject(created.data);
+    st.switchProject(migrated, created.id, created.name);
+    saveCache({ id: created.id, name: created.name, project: migrated, savedAt: Date.now() });
   } catch {
     const cache = loadCache();
     if (cache) st.switchProject(cache.project, cache.id, cache.name);

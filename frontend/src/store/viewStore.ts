@@ -12,6 +12,7 @@ interface ViewState {
   zoomBeats: (dir: 1 | -1) => void;
   shiftPitch: (dSemitones: number) => void;
   setBeatsVisible: (n: number) => void;
+  setPitchRange: (low: number, high: number) => void;
   resetView: () => void;
 }
 
@@ -73,6 +74,12 @@ export const useViewStore = create<ViewState>((set, get) => ({
     if (!BEAT_STEPS.includes(n)) return;
     set({ beatsVisible: n });
     saveSoon({ ...get(), beatsVisible: n });
+  },
+  setPitchRange: (low, high) => {
+    const span = clamp(high - low, 12, 127);
+    const lo = clamp(low, 0, 127 - span);
+    set({ lowPitch: lo, highPitch: lo + span });
+    saveSoon({ ...get(), lowPitch: lo, highPitch: lo + span });
   },
   resetView: () => {
     set({ ...DEFAULTS });

@@ -8,6 +8,8 @@ export interface SnapshotSource {
   timeSig: [number, number];
   tracks: ProjectState["tracks"];
   selectedTrackId: string | null;
+  masterVolume?: number;
+  masterEffects?: ProjectState["masterEffects"];
 }
 
 export function selectProjectSnapshot(s: SnapshotSource): ProjectState {
@@ -18,5 +20,7 @@ export function selectProjectSnapshot(s: SnapshotSource): ProjectState {
     timeSig: s.timeSig,
     tracks: s.tracks,
     selectedTrackId: s.selectedTrackId,
+    masterVolume: s.masterVolume,
+    masterEffects: s.masterEffects,
   };
 }

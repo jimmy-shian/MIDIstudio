@@ -7,10 +7,10 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  max-height: calc(100vh - 220px);
+  max-height: calc(100vh - 120px);
   min-height: 320px;
   position: sticky;
-  top: 76px;
+  top: 12px;
 }
 
 .header {
