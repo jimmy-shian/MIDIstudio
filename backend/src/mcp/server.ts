@@ -3,15 +3,19 @@ import { serveStdio } from "@modelcontextprotocol/server/stdio";
 import type { ToolOp } from "@midistudio/shared";
 import { MCP_SCHEMAS, MCP_DESCRIPTIONS } from "./toolSchemas.js";
 import {
-  getProject, loadProject, applyToProject,
-  listAllProjects, openProject, createNewProject, renameActiveProject, deleteSomeProject,
+  getProject,
+  loadProject,
+  applyToProject,
+  listAllProjects,
+  openProject,
+  createNewProject,
+  renameActiveProject,
+  deleteSomeProject,
 } from "./projectStore.js";
 import { lookupMusic } from "./knowledge.js";
 import { registerResources } from "./resources.js";
 
-// MCP server：8 個 op + music_lookup + load/get + 5 個專案工具，共 16 tools。
-// 任何 MCP host（Claude Desktop / VS Code Copilot / Cursor / Roo Code）連上即用。
-
+// MCP server：包含完整 16 個 ToolOp + music_lookup + load/get + 5 個專案工具。
 const text = (s: string): { content: [{ type: "text"; text: string }] } => ({
   content: [{ type: "text", text: s }],
 });
@@ -21,7 +25,7 @@ function summarize(output: { reports: string[] }): string {
 }
 
 export function createServer(): McpServer {
-  const server = new McpServer({ name: "midistudio", version: "0.1.0" });
+  const server = new McpServer({ name: "midistudio", version: "3.0.0" });
   registerResources(server);
 
   server.registerTool("get_project", { description: MCP_DESCRIPTIONS.get_project, inputSchema: MCP_SCHEMAS.get_project },
@@ -57,12 +61,28 @@ export function createServer(): McpServer {
   server.registerTool("music_lookup", { description: MCP_DESCRIPTIONS.music_lookup, inputSchema: MCP_SCHEMAS.music_lookup },
     async ({ topic }) => text(lookupMusic(topic)));
 
-  const mutating: { name: "create_track" | "add_notes" | "delete_notes" | "update_velocities" | "update_tempo" | "update_key" | "set_chord_progression" | "delete_track" }[] = [
-    { name: "create_track" }, { name: "add_notes" }, { name: "delete_notes" },
-    { name: "update_velocities" }, { name: "update_tempo" }, { name: "update_key" },
-    { name: "set_chord_progression" }, { name: "delete_track" },
+  const mutating: (keyof typeof MCP_SCHEMAS)[] = [
+    "create_composition",
+    "update_time_signature",
+    "create_track",
+    "add_notes",
+    "delete_notes",
+    "update_velocities",
+    "update_tempo",
+    "update_key",
+    "set_chord_progression",
+    "generate_drum_pattern",
+    "create_section",
+    "clear_region",
+    "transpose_region",
+    "quantize_region",
+    "humanize_region",
+    "set_track_mixer",
+    "set_effect",
+    "delete_track",
   ];
-  for (const { name } of mutating) {
+
+  for (const name of mutating) {
     server.registerTool(name, { description: MCP_DESCRIPTIONS[name], inputSchema: MCP_SCHEMAS[name] as any },
       async (args: any) => {
         try {
@@ -85,5 +105,5 @@ function toOp(name: string, args: any): ToolOp {
   }
 }
 
-// stdio 入口：stdout 是協議通道，只能 console.error。
+// stdio 入口
 serveStdio(createServer);

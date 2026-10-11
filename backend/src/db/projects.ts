@@ -1,4 +1,4 @@
-import { emptyProject, newProjectId, type ProjectState } from "@midistudio/shared";
+import { emptyProject, migrateProject, newProjectId, type ProjectState } from "@midistudio/shared";
 import { getDb } from "./database.js";
 
 // 模組：專案 CRUD。Express 路由與 MCP 共用同一份，前後端看到同一批工程。
@@ -31,7 +31,13 @@ export function countNotes(data: ProjectState): number {
 }
 
 function toRow(r: any): ProjectRow {
-  return { id: r.id, name: r.name, data: JSON.parse(r.data), created_at: r.created_at, updated_at: r.updated_at };
+  let data: ProjectState;
+  try {
+    data = migrateProject(JSON.parse(r.data));
+  } catch {
+    data = emptyProject();
+  }
+  return { id: r.id, name: r.name, data, created_at: r.created_at, updated_at: r.updated_at };
 }
 
 export function listProjects(): ProjectMeta[] {

@@ -1,5 +1,5 @@
 import { Midi } from "./midiLib.js";
-import { beatsToSeconds, type ProjectState } from "@midistudio/shared";
+import { beatsToSeconds, ticksToSeconds, type ProjectState } from "@midistudio/shared";
 
 // 模組：匯出。前身在 server.ts 內聯，抽出給路由/測試共用。
 export function projectToMidiBuffer(project: ProjectState): Buffer {
@@ -11,10 +11,17 @@ export function projectToMidiBuffer(project: ProjectState): Buffer {
     track.channel = t.channel ?? 0;
     if (t.kind !== "drums") track.instrument.number = t.program ?? 0;
     for (const n of t.notes) {
+      const hasTick = n.startTick !== undefined && n.durationTicks !== undefined;
+      const time = hasTick
+        ? ticksToSeconds(n.startTick as number, project.bpm)
+        : beatsToSeconds(n.startBeat, project.bpm);
+      const duration = hasTick
+        ? ticksToSeconds(n.durationTicks as number, project.bpm)
+        : beatsToSeconds(n.durBeat, project.bpm);
       track.addNote({
         midi: n.pitch,
-        time: beatsToSeconds(n.startBeat, project.bpm),
-        duration: beatsToSeconds(n.durBeat, project.bpm),
+        time,
+        duration,
         velocity: (n.velocity ?? 90) / 127,
       });
     }
