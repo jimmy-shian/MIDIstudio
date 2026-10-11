@@ -3,5 +3,6 @@ dist/
 .env
 backend/data/
 *.log
+devlog.txt
 *.lnk
 Packs.lnk
